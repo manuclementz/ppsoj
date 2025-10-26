@@ -81,7 +81,7 @@
         .grid {
     display: grid;
     /* Use Pico's variables for spacing */
-    gap: var(--grid-spacing-vertical) var(--grid-spacing-horizontal);
+    gap: 1rem;
 
     /* THE MAGIC:
        This automatically creates as many 300px columns as can fit.
