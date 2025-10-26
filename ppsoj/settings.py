@@ -175,3 +175,4 @@ if EXEC_ENV == 'PROD':
     SESSION_COOKIE_SECURE=True
     CSRF_COOKIE_SECURE=True
     USE_X_FORWARDED_HOST=True 
+    SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
