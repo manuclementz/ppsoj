@@ -17,13 +17,26 @@
     </header>
 
     <section id="current-season-stats" style="margin-top: 2rem;">
-        <h3 style="text-align: center; margin-bottom: 2rem;"><i class="bi bi-person-badge"></i> Bilan de la saison ({{ season.name }})</h3>
+        <h3 style="text-align: center; margin-bottom: 2rem;"><i class="bi bi-clipboard-data"></i> Classement ({{ season.name }})</h3>
         {% if season_stats %}
         <article data-theme="secondary">
             <div class="grid">
                 <div style="text-align: center;">
                     <strong>Rang</strong>
-                    <h2 style="margin: 0;">#{{ season_stats.rank }}</h2>
+                    <h2 style="margin: 0;">
+                    {% if season_stats.rank == 1 %}
+                            <i class="bi bi-trophy-fill" style="color: #FFD700;" title="1ère place"></i>
+                            #{{ season_stats.rank }}
+                        {% elif season_stats.rank == 2 %}
+                            <i class="bi bi-trophy-fill" style="color: #C0C0C0;" title="2ème place"></i>
+                            #{{ season_stats.rank }}
+                        {% elif season_stats.rank == 3 %}
+                            <i class="bi bi-trophy-fill" style="color: #CD7F32;" title="3ème place"></i>
+                            #{{ season_stats.rank }}
+                        {% else %}
+                            #{{ season_stats.rank }}
+                        {% endif %}
+                    </h2>
                 </div>
                 <div style="text-align: center;">
                     <strong>Score total</strong>
@@ -38,8 +51,31 @@
         {% endif %}
     </section>
 
+    <section id="all-time-stats" style="margin-top: 3rem;">
+        <h3 style="text-align: center; margin-bottom: 2rem;"><i class="bi bi-activity"></i> Stats (toutes saisons)</h3>
+        <article data-theme="secondary">
+            <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); text-align: center; gap: 1rem;">
+                <div>
+                    <small>Saisons Jouées</small>
+                    <h3 style="margin: 0;">{{ all_time_stats.seasons }}</h3>
+                </div>
+                <div>
+                    <small>Participations</small>
+                    <h3 style="margin: 0;">{{ all_time_stats.participations }}</h3>
+                </div>
+                <div>
+                    <small>Victoires (Top 1)</small>
+                    <h3 style="margin: 0;">{{ all_time_stats.wins }}</h3>
+                </div>
+                <div>
+                    <small>Score total</small>
+                    <h3 style="margin: 0;">{{ all_time_stats.total_points }}</h3>
+                </div>
+            </div>
+        </article>
+    </section>
     <section id="participation-history" style="margin-top: 3rem;">
-        <h3 style="text-align: center; margin-bottom: 2rem;"><i class="bi bi-list-ol"></i> Historique des participations</h3>
+        <h3 style="text-align: center; margin-bottom: 2rem;"><i class="bi bi-list-ol"></i> Historique des scores</h3>
         <div class="overflow-auto">
             <table>
                 <thead>

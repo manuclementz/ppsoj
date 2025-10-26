@@ -5,7 +5,7 @@
 {% endcomment %}
 
 
-<section class="podium-container">
+<section class="podium-container grid">
 
     <article class="podium-item podium-2" data-theme="secondary">
         <i class="bi bi-trophy-fill" style="color: #C0C0C0; font-size: 2rem;"></i>
@@ -13,7 +13,7 @@
         
         {% for entry in leaderboard.ranked_entries %}{% if entry.rank == 2 %}
             <div style="margin-top: 1rem;">
-                <a href="{% url 'leaderboard:player_detail' entry.player.slug %}">
+                <a href="{% url 'leaderboard:player_detail' entry.player.slug %}"  style="color:var(--pico-primary)">
                     {% if entry.player.avatar %}
                         <img src="{{ entry.player.avatar.url }}" alt="{{ entry.player.display_name }}">
                     {% else %}
@@ -33,7 +33,7 @@
         
         {% for entry in leaderboard.ranked_entries %}{% if entry.rank == 1 %}
             <div style="margin-top: 1rem;">
-                <a href="{% url 'leaderboard:player_detail' entry.player.slug %}">
+                <a href="{% url 'leaderboard:player_detail' entry.player.slug %}"  style="color:var(--pico-primary)">
                     {% if entry.player.avatar %}
                         <img src="{{ entry.player.avatar.url }}" alt="{{ entry.player.display_name }}" style="width: 80px; height: 80px;">
                     {% else %}
@@ -53,7 +53,7 @@
         
         {% for entry in leaderboard.ranked_entries %}{% if entry.rank == 3 %}
             <div style="margin-top: 1rem;">
-                <a href="{% url 'leaderboard:player_detail' entry.player.slug %}">
+                <a href="{% url 'leaderboard:player_detail' entry.player.slug %}"  style="color:var(--pico-primary)">
                     {% if entry.player.avatar %}
                         <img src="{{ entry.player.avatar.url }}" alt="{{ entry.player.display_name }}">
                     {% else %}

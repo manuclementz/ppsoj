@@ -3,7 +3,7 @@
     Attends une variable 'leaderboard' (un QuerySet de Player) dans le contexte.
 {% endcomment %}
 
-<section class="podium-container">
+<section class="podium-container grid">
 
     <article class="podium-item podium-2" data-theme="secondary">
         <i class="bi bi-trophy-fill" style="color: #C0C0C0; font-size: 2rem;"></i>
@@ -11,7 +11,7 @@
         
         {% for player in leaderboard %}{% if player.rank == 2 %}
             <div style="margin-top: 1rem;">
-                <a href="{% url 'leaderboard:player_detail' player.slug %}">
+                <a href="{% url 'leaderboard:player_detail' player.slug %}"  style="color:var(--pico-primary)">
                     {% if player.avatar %}
                         <img src="{{ player.avatar.url }}" alt="{{ player.display_name }}">
                     {% else %}
@@ -31,7 +31,7 @@
         
         {% for player in leaderboard %}{% if player.rank == 1 %}
             <div style="margin-top: 1rem;">
-                <a href="{% url 'leaderboard:player_detail' player.slug %}">
+                <a href="{% url 'leaderboard:player_detail' player.slug %}" style="color:var(--pico-primary)">
                     {% if player.avatar %}
                         <img src="{{ player.avatar.url }}" alt="{{ player.display_name }}" style="width: 80px; height: 80px;">
                     {% else %}
@@ -51,7 +51,7 @@
         
         {% for player in leaderboard %}{% if player.rank == 3 %}
             <div style="margin-top: 1rem;">
-                <a href="{% url 'leaderboard:player_detail' player.slug %}">
+                <a href="{% url 'leaderboard:player_detail' player.slug %}" style="color:var(--pico-primary)">
                     {% if player.avatar %}
                         <img src="{{ player.avatar.url }}" alt="{{ player.display_name }}">
                     {% else %}

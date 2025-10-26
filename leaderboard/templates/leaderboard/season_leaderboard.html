@@ -1,33 +1,32 @@
 {% extends 'leaderboard/base.html' %}
 
 {% block title %}
-Classement - {{ season.name }}
+    Classement - {{ season.name }}
 {% endblock %}
 
 {% block content %}
 
 <article>
+
     <header>
-        <h2 style="text-align: center; margin-top:1rem;" class="my-2"><i class="bi bi-bar-chart-line-fill"></i>
-            Classement - {{season.name}}</h2>
+        <h2 style="text-align: center; margin-top:1rem;" class="my-2">
+            <i class="bi bi-clipboard-data"></i> Classement actuel - {{season.name}}</h2>
     </header>
-
-{% include 'leaderboard/_season_podium.html' %}
-
+                    {% include 'leaderboard/_season_podium.html' %}
 
     <div class="overflow-auto">
         <table>
             <thead>
                 <tr>
-                    <th scope="col">Rang</th>
+                    <th scope="col" style="text-align: right;">Rang</th>
                     <th scope="col">Joueureuse</th>
                     <th scope="col">Score total</th>
                 </tr>
             </thead>
             <tbody>
                 {% for player in leaderboard %}
-                <tr {% if player.rank <= 3 %}data-theme="secondary"{% endif %} style="height:100px;">
-                    <td style="font-size: 1.25rem; text-align: right; width:130px;">
+                <tr style="height:100px" {% if player.rank <= 3 %}data-theme="secondary"{% endif %}>
+                    <td style="font-size: 1.25rem; text-align: right; width: 120px;">
                         {% if player.rank == 1 %}
                             <i class="bi bi-trophy-fill" style="color: #FFD700;" title="1ère place"></i>
                             <strong>#{{ player.rank }}</strong>
@@ -45,10 +44,10 @@ Classement - {{ season.name }}
                         <a href="{% url 'leaderboard:player_detail' player.slug %}" class="player-link">
                             {% if player.avatar %}
                             <img src="{{ player.avatar.url }}" alt="{{ player.display_name }}"
-                                style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; vertical-align: middle; margin-right: 10px;">
+                                style="width: 2.5rem; height: 2.5rem; border-radius: 50%; object-fit: cover; vertical-align: middle; margin-right: 10px;">
                             {% else %}
                             <i class="bi bi-person-circle"
-                                style="font-size: 1.5rem; vertical-align: middle; margin-right: 10px;"></i>
+                                style="font-size: 2.5rem; vertical-align: middle; margin-right: 10px;"></i>
                             {% endif %}
                             <strong>{{ player.display_name }}</strong>
                         </a>
@@ -67,79 +66,99 @@ Classement - {{ season.name }}
     </div>
 </article>
 
-{% for event in all_events %}
-
-    {% ifchanged event.is_details_public %}
-        {% if event.is_details_public %}
-            <h2 style="margin-top: 3rem; text-align: center;"> <i class="bi bi-calendar-check-fill"></i> Événements passés</h2>
-        {% else %}
-            <h2 style="margin-top: 3rem; text-align: center;"> <i class="bi bi-calendar-event-fill"></i> Événements à venir</h2>
-        {% endif %}
-    {% endifchanged %}
-    
-
-    {% if event.is_details_public %}
-    <article style="padding: 1rem;">
-        <div class="grid" style="grid-template-columns: 1fr 5fr 1fr; align-items: center; margin: 0;">
-            <div>
-                {% if event.image %}
-                <img src="{{ event.image.url }}" alt="{{ event.name }}"
-                    style="width: 100%; height: 150px; object-fit: cover; border-radius: var(--border-radius);">
-                {% else %}
-                <div
-                    style="width: 100%; height: 150px; background-color: var(--secondary); border-radius: var(--border-radius); display: grid; place-items: center;">
-                    <i class="bi bi-calendar-event" style="font-size: 3rem; color: var(--secondary-inverse);"></i>
-                </div>
-                {% endif %}
-            </div>
-            <div style="padding-left: 1.5rem;">
-                <h4 style="margin-bottom: 0.25rem;">{{ event.name }}</h4>
-                <p style="margin-bottom: 1rem;">
-                    <i class="bi bi-controller"></i> {{ event.game.title }}
-                    <br>
-                    <small><i class="bi bi-clock-fill"></i> Le {{ event.date|date:"d/m/Y" }}</small>
-                </p>
-            </div>
-            <div>
-                <a href="{% url 'leaderboard:event_detail' event.id %}" role="button" class="contrast"
-                    style="margin: 0; width: 100%;">
-                    <i class="bi bi-card-list"></i> Détails
-                </a>
-            </div>
+<article data-theme="secondary">
+    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); text-align: center; gap: 1rem;">
+        <div>
+            <small>Joueureuses</small>
+            <h2 style="margin: 0;">{{ stats.total_players }}</h2>
         </div>
-    </article>
-
-    {% else %}
-    <article data-theme="secondary" style="padding: 1rem;">
-        <div class="grid" style="grid-template-columns: 1fr 5fr 1fr; align-items: center; margin: 0;">
-            <div>
-                <div
-                    style="width: 100%; height: 150px; background-color: var(--card-background-color); border-radius: var(--border-radius); display: grid; place-items: center; opacity: 0.7;">
-                    <i class="bi bi-patch-question-fill" style="font-size: 3rem; color: var(--secondary-inverse);"></i>
-                </div>
-            </div>
-            <div style="padding-left: 1.5rem;">
-                <h4 style="margin-bottom: 0.25rem;">{{ event.name }}</h4>
-                <p style="margin-bottom: 1rem; opacity: 0.7;">
-                    <i class="bi bi-controller"></i> Le Jeu Mystère
-                    <br>
-                    <small><i class="bi bi-clock-fill"></i> À venir le {{ event.date|date:"d/m/Y" }}</small>
-                </p>
-            </div>
-            <div>
-                <a href="#" role="button" disabled class="contrast"
-                    style="margin: 0; width: 100%;" aria-disabled="true">
-                    <i class="bi bi-hourglass"></i> À venir
-                </a>
-            </div>
+        <div>
+            <small>Événements</small>
+            <h2 style="margin: 0;">{{ stats.total_events }}</h2>
         </div>
-    </article>
-    {% endif %}
-
-{% empty %}
-<article>
-    <p style="text-align: center;">Aucun événement n'est prévu pour cette saison.</p>
+        <div>
+            <small>Points remportés</small>
+            <h2 style="margin: 0;">{{ stats.total_points_awarded }}</h2>
+        </div>
+                </div>
 </article>
-{% endfor %}
+
+<div class="grid">
+
+    <div>
+        <h3 style="margin-top: 2rem; text-align: center;"> <i class="bi bi-calendar-event-fill"></i> Événements à venir</h3>
+        
+        {% for event in upcoming_events %}
+        <article data-theme="secondary" style="padding: 1rem; margin-bottom: 1rem;">
+            <div class="grid" style="grid-template-columns: 2fr 6fr 3fr; align-items: center; margin: 0;">
+                <div>
+                    <div
+                        style="width: 100%; height: 150px; background-color: var(--card-background-color); border-radius: var(--border-radius); display: grid; place-items: center; opacity: 0.7;">
+                        <i class="bi bi-patch-question-fill" style="font-size: 3rem; color: var(--secondary-inverse);"></i>
+                    </div>
+                </div>
+                <div style="padding-left: 1.5rem;">
+                    <h4 style="margin-bottom: 0.25rem;">{{ event.name }}</h4>
+                    <p style="margin-bottom: 1rem; opacity: 0.7;">
+                        <i class="bi bi-controller"></i> {{ event.game.title }}
+                        <br>
+                        <small><i class="bi bi-clock-fill"></i> À venir le {{ event.date|date:"d/m/Y" }}</small>
+                    </p>
+                </div>
+                <div>
+                    <a href="#" role="button" class="contrast"
+                        style="margin: 0; width: 100%;" disabled aria-disabled="true">
+                        <i class="bi bi-card-list"></i> À venir
+                    </a>
+                </div>
+            </div>
+        </article>
+        {% empty %}
+        <article data-theme="secondary">
+            <p style="text-align: center;">Aucun événement à venir.</p>
+        </article>
+        {% endfor %}
+    </div>
+
+    <div>
+        <h3 style="margin-top: 2rem; text-align: center;"> <i class="bi bi-calendar-check-fill"></i> Événements passés</h3>
+
+        {% for event in past_events %}
+        <article style="padding: 1rem; margin-bottom: 1rem;">
+            <div class="grid" style="grid-template-columns: 2fr 6fr 3fr; align-items: center; margin: 0;">
+                <div>
+                    {% if event.game.image %}
+                    <img src="{{ event.game.image.url }}" alt="{{ event.name }}"
+                        style="border-radius: 10px">
+                    {% else %}
+                    <div
+                        style="width: 100%; height: 150px; background-color: var(--secondary); border-radius: var(--border-radius); display: grid; place-items: center;">
+                        <i class="bi bi-calendar-event" style="font-size: 3rem; color: var(--secondary-inverse);"></i>
+                    </div>
+                    {% endif %}
+                </div>
+                <div style="padding-left: 1.5rem;">
+                    <h4 style="margin-bottom: 0.25rem;">{{ event.name }}</h4>
+                    <p style="margin-bottom: 1rem;">
+                        <i class="bi bi-controller"></i> {{ event.game.title }}
+                        <br>
+                        <small><i class="bi bi-clock-fill"></i> Le {{ event.date|date:"d/m/Y" }}</small>
+                    </p>
+                </div>
+                <div>
+                    <a href="{% url 'leaderboard:event_detail' event.id %}" role="button" class="contrast"
+                        style="margin: 0; width: 100%;">
+                        <i class="bi bi-card-list"></i> Détails
+                    </a>
+                </div>
+            </div>
+        </article>
+        {% empty %}
+        <article>
+            <p style="text-align: center;">Aucun événement passé pour cette saison.</p>
+        </article>
+        {% endfor %}
+    </div>
+</div>
 
 {% endblock %}

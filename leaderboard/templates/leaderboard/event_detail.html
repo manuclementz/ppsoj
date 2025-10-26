@@ -22,13 +22,13 @@
     <hr>
 
     <section id="game-info" style="margin-bottom: 3rem;">
-        <h3 style="text-align: center; margin-bottom: 2rem;">À propos du jeu</h3>
+        <h3 style="text-align: center; margin-bottom: 2rem;"><i class="bi bi-controller"></i> À propos du jeu</h3>
         <article data-theme="secondary">
             <div class="grid" style="grid-template-columns: auto 1fr; gap: 1.5rem; align-items: start;">
-                <div style="min-width: 120px; max-width: 150px; text-align: center;">
+                <div style="min-width: 120px; max-width: 200px; text-align: center;">
                     {% if event.game.image %}
                         <img src="{{ event.game.image.url }}" alt="{{ event.game.title }}"
-                            style="width: 100%; border-radius: var(--border-radius); height: auto; object-fit: cover;">
+                            style="width: 100%; border-radius: 10px; height: auto; object-fit: cover;">
                     {% else %}
                         <i class="bi bi-controller" style="font-size: 8rem; color: var(--muted-color);"></i>
                     {% endif %}
@@ -68,7 +68,7 @@
     <hr>
 
     <section id="leaderboards">
-        <h3 style="text-align: center; margin-bottom: 2rem;">Classements de l'événement</h3>
+        <h3 style="text-align: center; margin-bottom: 2rem;"><i class="bi bi-clipboard-data"></i> Classement(s) de l'événement</h3>
         
         {% for lb in event.leaderboards.all %}
         <article style="margin-bottom: 2rem;">

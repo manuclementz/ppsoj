@@ -77,3 +77,16 @@
             min-height: 100px; 
             border-bottom: 5px solid #CD7F32; /* Bronze */
         }
+
+        .grid {
+    display: grid;
+    /* Use Pico's variables for spacing */
+    gap: var(--grid-spacing-vertical) var(--grid-spacing-horizontal);
+
+    /* THE MAGIC:
+       This automatically creates as many 300px columns as can fit.
+       When there's not enough space, it automatically "collapses"
+       to one column. No media query needed!
+    */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
