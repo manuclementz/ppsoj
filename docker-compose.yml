@@ -1,16 +1,16 @@
 services:
   silence-on-retrojoue:
-    image: silence-on-retrojoue
+    image: ppsoj
     env_file:
       - .env
     volumes:
-      - ~/data/silence-on-retrojoue/media:/app/media
-      - ~/data/silence-on-retrojoue/static:/app/staticfiles
+      - ~/data/ppsoj/media:/app/media
+      - ~/data/ppsoj/static:/app/staticfiles
     build:
       context: .
       dockerfile: ./Dockerfile
     ports:
-      - 127.0.0.1:8001:8000
+      - 127.0.0.1:8010:8000
     depends_on:
       postgresdb:
         condition: service_healthy
