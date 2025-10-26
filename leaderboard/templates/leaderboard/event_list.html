@@ -1,0 +1,39 @@
+{% extends 'leaderboard/base.html' %}
+
+{% block title %}
+    Events - {{ season.name }}
+{% endblock %}
+
+{% block content %}
+<header>
+    <h2><i class="bi bi-calendar-event-fill"></i> Events</h2>
+    <h3>{{ season.name }}</h3>
+</header>
+
+<div class="grid">
+    {% for event in event_list %}
+    <article>
+        {% if event.image %}
+            <img src="{{ event.image.url }}" alt="{{ event.name }}" style="width: 100%; height: 200px; object-fit: cover;">
+        {% endif %}
+        <header style="padding: 1rem 1rem 0 1rem;">
+            <h4 style="margin-bottom: 0.25rem;">{{ event.name }}</h4>
+            <p style="margin-bottom: 0;">
+                <i class="bi bi-controller"></i> {{ event.game.title }}
+                <br>
+                <small><i class="bi bi-clock-fill"></i> {{ event.date|date:"F d, Y" }}</small>
+            </p>
+        </header>
+        <footer style="padding: 0 1rem 1rem 1rem;">
+            <a href="{% url 'leaderboard:event_detail' event.id %}" role="button">
+                View Details
+            </a>
+        </footer>
+    </article>
+    {% empty %}
+    <article>
+        <p>There are no events scheduled for this season yet.</p>
+    </article>
+    {% endfor %}
+</div>
+{% endblock %}

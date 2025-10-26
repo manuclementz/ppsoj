@@ -1,0 +1,55 @@
+{% extends 'leaderboard/base.html' %}
+
+{% block title %}
+    {{ leaderboard.title }}
+{% endblock %}
+
+{% block content %}
+<article>
+    <header>
+        <nav aria-label="breadcrumb">
+            <ul>
+                <li><a href="{% url 'leaderboard:event_list' %}">Events</a></li>
+                <li><a href="{% url 'leaderboard:event_detail' leaderboard.event.id %}">{{ leaderboard.event.name }}</a></li>
+                <li>{{ leaderboard.title }}</li>
+            </ul>
+        </nav>
+        <h2>{{ leaderboard.title }}</h2>
+        <p><strong>Rules:</strong> {{ leaderboard.description|linebreaks }}</p>
+    </header>
+
+    <div class="overflow-auto">
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">Rang</th>
+                    <th scope="col">Joueureuse</th>
+                    <th scope="col">Points</th>
+                    <th scope="col">Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in leaderboard.entries.all %}
+                <tr>
+                    <td><strong>#{{ forloop.counter }}</strong></td>
+                    <td>
+                        {% if entry.player.avatar %}
+                            <img src="{{ entry.player.avatar.url }}" alt="{{ entry.player.display_name }}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; vertical-align: middle; margin-right: 10px;">
+                        {% endif %}
+                        {{ entry.player.display_name }}
+                    </td>
+                    <td><strong>{{ entry.points }}</strong></td>
+                    <td>{{ entry.notes|linebreaksbr }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center;">
+                        No entries have been added to this leaderboard yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</article>
+{% endblock %}

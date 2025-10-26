@@ -1,0 +1,79 @@
+{% extends 'leaderboard/base.html' %}
+
+{% block title %}
+    {{ player.display_name }}
+{% endblock %}
+
+{% block content %}
+<article>
+    <header style="text-align: center;">
+        {% if player.avatar %}
+            <img src="{{ player.avatar.url }}" alt="{{ player.display_name }}" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem;">
+        {% else %}
+            <i class="bi bi-person-circle" style="font-size: 150px;"></i>
+        {% endif %}
+        
+        <h1 style="margin: 0;">{{ player.display_name }}</h1>
+    </header>
+
+    <section id="current-season-stats" style="margin-top: 2rem;">
+        <h3 style="text-align: center; margin-bottom: 2rem;"><i class="bi bi-person-badge"></i> Bilan de la saison ({{ season.name }})</h3>
+        {% if season_stats %}
+        <article data-theme="secondary">
+            <div class="grid">
+                <div style="text-align: center;">
+                    <strong>Rang</strong>
+                    <h2 style="margin: 0;">#{{ season_stats.rank }}</h2>
+                </div>
+                <div style="text-align: center;">
+                    <strong>Score total</strong>
+                    <h2 style="margin: 0;">{{ season_stats.total_points }}</h2>
+                </div>
+            </div>
+        </article>
+        {% else %}
+        <article data-theme="secondary">
+            <p style="text-align: center; margin: 0;">Aucun point enregistré pour ce joueur cette saison.</p>
+        </article>
+        {% endif %}
+    </section>
+
+    <section id="participation-history" style="margin-top: 3rem;">
+        <h3 style="text-align: center; margin-bottom: 2rem;"><i class="bi bi-list-ol"></i> Historique des participations</h3>
+        <div class="overflow-auto">
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Saison</th>
+                        <th scope="col">Événement</th>
+                        <th scope="col">Classement</th>
+                        <th scope="col">Points</th>
+                        <th scope="col">Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in participation_history %}
+                    <tr>
+                        <td>{{ entry.leaderboard.event.season.name }}</td>
+                        <td>
+                            <a href="{% url 'leaderboard:event_detail' entry.leaderboard.event.id %}">
+                                {{ entry.leaderboard.event.name }}
+                            </a>
+                        </td>
+                        <td>{{ entry.leaderboard.title }}</td>
+                        <td><strong>{{ entry.points }}</strong></td>
+                        <td>{{ entry.notes|linebreaksbr }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" style="text-align: center;">
+                            Ce joueur n'a participé à aucun événement.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</article>
+{% endblock %}

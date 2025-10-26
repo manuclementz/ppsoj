@@ -1,0 +1,70 @@
+{% comment %}
+    Template partiel pour afficher un podium.
+    Attends une variable 'leaderboard' dans le contexte.
+    Utilisé comme : {% include 'leaderboard/_podium.html' with leaderboard=lb %}
+{% endcomment %}
+
+
+<section class="podium-container">
+
+    <article class="podium-item podium-2" data-theme="secondary">
+        <i class="bi bi-trophy-fill" style="color: #C0C0C0; font-size: 2rem;"></i>
+        <h4>2ème Place</h4>
+        
+        {% for entry in leaderboard.ranked_entries %}{% if entry.rank == 2 %}
+            <div style="margin-top: 1rem;">
+                <a href="{% url 'leaderboard:player_detail' entry.player.slug %}">
+                    {% if entry.player.avatar %}
+                        <img src="{{ entry.player.avatar.url }}" alt="{{ entry.player.display_name }}">
+                    {% else %}
+                        <i class="bi bi-person-circle icon-placeholder"></i>
+                    {% endif %}
+                    <br>
+                    <strong>{{ entry.player.display_name }}</strong>
+                </a>
+                <br><small>{{ entry.points }} pts</small>
+            </div>
+        {% endif %}{% endfor %}
+    </article>
+    
+    <article class="podium-item podium-1">
+        <i class="bi bi-trophy-fill" style="color: #FFD700; font-size: 3rem;"></i>
+        <h4>1ère Place</h4>
+        
+        {% for entry in leaderboard.ranked_entries %}{% if entry.rank == 1 %}
+            <div style="margin-top: 1rem;">
+                <a href="{% url 'leaderboard:player_detail' entry.player.slug %}">
+                    {% if entry.player.avatar %}
+                        <img src="{{ entry.player.avatar.url }}" alt="{{ entry.player.display_name }}" style="width: 80px; height: 80px;">
+                    {% else %}
+                        <i class="bi bi-person-circle" style="font-size: 80px;"></i>
+                    {% endif %}
+                    <br>
+                    <strong>{{ entry.player.display_name }}</strong>
+                </a>
+                <br><small>{{ entry.points }} pts</small>
+            </div>
+        {% endif %}{% endfor %}
+    </article>
+
+    <article class="podium-item podium-3" data-theme="secondary">
+        <i class="bi bi-trophy-fill" style="color: #CD7F32; font-size: 2rem;"></i>
+        <h4>3ème Place</h4>
+        
+        {% for entry in leaderboard.ranked_entries %}{% if entry.rank == 3 %}
+            <div style="margin-top: 1rem;">
+                <a href="{% url 'leaderboard:player_detail' entry.player.slug %}">
+                    {% if entry.player.avatar %}
+                        <img src="{{ entry.player.avatar.url }}" alt="{{ entry.player.display_name }}">
+                    {% else %}
+                        <i class="bi bi-person-circle icon-placeholder"></i>
+                    {% endif %}
+                    <br>
+                    <strong>{{ entry.player.display_name }}</strong>
+                </a>
+                <br><small>{{ entry.points }} pts</small>
+            </div>
+        {% endif %}{% endfor %}
+    </article>
+
+</section>

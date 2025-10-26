@@ -1,0 +1,147 @@
+{% extends 'leaderboard/base.html' %}
+{% load static %}
+
+{% block title %}
+    {{ event.name }}
+{% endblock %}
+
+{% block content %}
+<article>
+    {% if event.image %}
+    <figure style="margin-bottom: 2rem;">
+        <img src="{{ event.image.url }}" alt="{{ event.name }}"
+            style="width: 100%; height: auto; max-height: 350px; object-fit: cover; border-radius: var(--border-radius);">
+    </figure>
+    {% endif %}
+
+    <header style="text-align: center;">
+        <h2 style="margin-bottom: 0.5rem;">{{ event.name }}</h2>
+        <p class="secondary" style="font-size: 1.1rem;"><i class="bi bi-calendar-event-fill"></i> Le {{ event.date|date:"d/m/Y" }}</p>
+    </header>
+
+    <hr>
+
+    <section id="game-info" style="margin-bottom: 3rem;">
+        <h3 style="text-align: center; margin-bottom: 2rem;">À propos du jeu</h3>
+        <article data-theme="secondary">
+            <div class="grid" style="grid-template-columns: auto 1fr; gap: 1.5rem; align-items: start;">
+                <div style="min-width: 120px; max-width: 150px; text-align: center;">
+                    {% if event.game.image %}
+                        <img src="{{ event.game.image.url }}" alt="{{ event.game.title }}"
+                            style="width: 100%; border-radius: var(--border-radius); height: auto; object-fit: cover;">
+                    {% else %}
+                        <i class="bi bi-controller" style="font-size: 8rem; color: var(--muted-color);"></i>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <h4 style="margin-top: 0; margin-bottom: 0.5rem;">{{ event.game.title }} {% if event.game.year %}({{ event.game.year }}){% endif %}</h4>
+                    {% if event.description %}
+                        <p style="margin-bottom: 1rem;">{{ event.description|linebreaks }}</p>
+                    {% endif %}
+                    {% if event.game.store_url %}
+                        <a href="{{ event.game.store_url }}" target="_blank" rel="noopener noreferrer" role="button"
+                            class="outline contrast" style="max-width: fit-content; margin-top: 0.5rem;">
+                            <i class="bi bi-box-arrow-up-right"></i> Télécharger le jeu
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </article>
+    </section>
+
+    {% if event.youtube_video_id %}
+    <section id="event-video" style="margin-bottom: 3rem;">
+        <h3 style="text-align: center; margin-bottom: 2rem;">Replay de l'événement</h3>
+        <div
+            style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: var(--border-radius);">
+            <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+                src="https://www.youtube.com/embed/{{ event.youtube_video_id }}" title="Replay YouTube de l'événement"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+        </div>
+    </section>
+    {% endif %}
+
+    <hr>
+
+    <section id="leaderboards">
+        <h3 style="text-align: center; margin-bottom: 2rem;">Classements de l'événement</h3>
+        
+        {% for lb in event.leaderboards.all %}
+        <article style="margin-bottom: 2rem;">
+            <header>
+                <h4>{{ lb.title }}</h4>
+                {% if lb.description %}
+                <p class="secondary"><i class="bi bi-info-circle-fill"></i> <strong>Règles :</strong> {{ lb.description|linebreaks }}</p>
+                {% endif %}
+            </header>
+            
+            {% include 'leaderboard/_podium.html' with leaderboard=lb %}
+            
+            <div class="overflow-auto">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: center;" scope="col">Rang</th>
+                            <th scope="col">Joueureuse</th>
+                            <th scope="col">Points</th>
+                            <th scope="col">Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        {% for entry in lb.ranked_entries %}
+                        <tr style="height:100px">
+                        <td style="font-size: 1.25rem; text-align: right; width: 120px;">
+                            {% if entry.rank == 1 %}
+                                <i class="bi bi-trophy-fill" style="color: #FFD700;" title="1ère place"></i>
+                                <strong>#{{ entry.rank }}</strong>
+                            {% elif entry.rank == 2 %}
+                                <i class="bi bi-trophy-fill" style="color: #C0C0C0;" title="2ème place"></i>
+                                <strong>#{{ entry.rank }}</strong>
+                            {% elif entry.rank == 3 %}
+                                <i class="bi bi-trophy-fill" style="color: #CD7F32;" title="3ème place"></i>
+                                <strong>#{{ entry.rank }}</strong>
+                            {% else %}
+                                <strong>#{{ entry.rank }}</strong>
+                            {% endif %}
+                        </td>
+                            
+                            <td>
+                                <a href="{% url 'leaderboard:player_detail' entry.player.slug %}" class="player-link">
+                                    {% if entry.player.avatar %}
+                                    <img src="{{ entry.player.avatar.url }}" alt="{{ entry.player.display_name }}"
+                                        style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; vertical-align: middle; margin-right: 10px;">
+                                    {% else %}
+                                    <i class="bi bi-person-circle"
+                                        style="font-size: 2rem; vertical-align: middle; margin-right: 10px;"></i>
+                                    {% endif %}
+                                    <strong>{{ entry.player.display_name }}</strong>
+                                </a>
+                            </td>
+                            <td><strong>{{ entry.points }}</strong></td>
+                            <td>{{ entry.notes|linebreaksbr }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" style="text-align: center;">
+                                Aucun participant pour ce classement.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </article>
+        {% empty %}
+        <article data-theme="secondary">
+            <p style="text-align: center;">Aucun classement n'a été créé pour cet événement.</p>
+        </article>
+        {% endfor %}
+    </section>
+
+</article>
+{% endblock %}
