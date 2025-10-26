@@ -1,11 +1,26 @@
 from django.db import models
 from django.utils.text import slugify
-from django.utils import timezone # Import timezone
+from django.utils import timezone
+import os
+from io import BytesIO
+from PIL import Image
+from django.core.files.base import ContentFile
+
+def _process_image(image_field, max_dims=None):
+    img = Image.open(image_field)
+
+    if max_dims:
+        img.thumbnail(max_dims, Image.Resampling.LANCZOS)
+
+    output_buffer = BytesIO()
+    img.save(output_buffer, format='WEBP', quality=85)
+    output_buffer.seek(0)
+
+    file_name = os.path.splitext(image_field.name)[0] + '.webp'
+
+    return file_name, ContentFile(output_buffer.read())
 
 class Player(models.Model):
-    """
-    A simple model for a competitor. Not linked to a Django user.
-    """
     display_name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(max_length=100, unique=True, blank=True)
     avatar = models.ImageField(upload_to='player_avatars/', null=True, blank=True)
@@ -16,12 +31,21 @@ class Player(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.display_name)
+        
+        old_avatar = None
+        if self.pk:
+            try:
+                old_avatar = Player.objects.get(pk=self.pk).avatar
+            except Player.DoesNotExist:
+                pass
+        
+        if self.avatar and self.avatar != old_avatar:
+            file_name, content = _process_image(self.avatar, max_dims=(250, 250))
+            self.avatar.save(file_name, content, save=False)
+
         super().save(*args, **kwargs)
 
 class Game(models.Model):
-    """
-    Metadata for a game.
-    """
     title = models.CharField(max_length=200)
     year = models.PositiveIntegerField(null=True, blank=True)
     store_url = models.URLField(max_length=500, blank=True)
@@ -30,10 +54,21 @@ class Game(models.Model):
     def __str__(self):
         return self.title
 
+    def save(self, *args, **kwargs):
+        old_image = None
+        if self.pk:
+            try:
+                old_image = Game.objects.get(pk=self.pk).image
+            except Game.DoesNotExist:
+                pass
+        
+        if self.image and self.image != old_image:
+            file_name, content = _process_image(self.image, max_dims=None)
+            self.image.save(file_name, content, save=False)
+            
+        super().save(*args, **kwargs)
+
 class Season(models.Model):
-    """
-    A container for a period of competition, e.g., "Season 1".
-    """
     name = models.CharField(max_length=100)
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
@@ -46,9 +81,6 @@ class Season(models.Model):
         return self.name
 
 class Event(models.Model):
-    """
-    A specific instance of a competition, e.g., "Week 1: Celeste Speedrun".
-    """
     season = models.ForeignKey(
         Season,
         on_delete=models.PROTECT,
@@ -72,18 +104,29 @@ class Event(models.Model):
         default=False,
         help_text="If unchecked, only the event name and date will be public."
     )
+    
     def __str__(self):
         return f"{self.season.name}: {self.name}"
+    
     @property
     def is_in_the_past(self):
-        """Helper to check if the event date has passed."""
         return self.date < timezone.now()
 
+    def save(self, *args, **kwargs):
+        old_image = None
+        if self.pk:
+            try:
+                old_image = Event.objects.get(pk=self.pk).image
+            except Event.DoesNotExist:
+                pass
+        
+        if self.image and self.image != old_image:
+            file_name, content = _process_image(self.image, max_dims=None)
+            self.image.save(file_name, content, save=False)
+            
+        super().save(*args, **kwargs)
+
 class Leaderboard(models.Model):
-    """
-    A specific leaderboard within an event.
-    e.g., "Main", "B-Side", "Bonus"
-    """
     event = models.ForeignKey(
         Event,
         on_delete=models.CASCADE,
@@ -99,10 +142,6 @@ class Leaderboard(models.Model):
         return f"{self.event.name} - {self.title}"
 
 class LeaderboardEntry(models.Model):
-    """
-    A single player's entry on a single leaderboard.
-    This is where you manually assign points.
-    """
     leaderboard = models.ForeignKey(
         Leaderboard,
         on_delete=models.CASCADE,
@@ -125,7 +164,7 @@ class LeaderboardEntry(models.Model):
     class Meta:
         ordering = ['-points']
         unique_together = [
-            ('leaderboard', 'player') # Player can only appear once per leaderboard
+            ('leaderboard', 'player')
         ]
         verbose_name_plural = "Leaderboard Entries"
 
