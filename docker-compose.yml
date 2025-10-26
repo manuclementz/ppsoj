@@ -1,5 +1,5 @@
 services:
-  silence-on-retrojoue:
+  ppsoj:
     image: ppsoj
     env_file:
       - .env
